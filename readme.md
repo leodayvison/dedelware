@@ -21,3 +21,6 @@ O projeto consiste em uma implementação básica de um reverse shell, uma técn
 - Processos: criação de daemon para execução de código malicioso sem percepção do usuário
 - Threads: Multithreading para evitar travamento do processo servidor na máquina atacante
 - Chamadas de sistema: criação de sockets TCP, redirecionamento de entrada e saída padrão, substituição de programa que é rodado em certo processo
+
+
+https://canva.link/7shjibyjulnfcz3
