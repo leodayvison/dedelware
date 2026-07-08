@@ -15,7 +15,7 @@ int main() {
         return 1;
     } else if (pid == 0) {
         // Child process
-        int port = 4242;
+        int port = 8080;
         struct sockaddr_in revsockaddr;
 
         int sockt = socket(AF_INET, SOCK_STREAM, 0);

